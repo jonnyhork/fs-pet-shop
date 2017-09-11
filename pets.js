@@ -31,7 +31,7 @@ if (cmd === 'read') {
   fs.readFile(petsPath, 'utf8', (readErr, data) => {
 
     let pets = JSON.parse(data)
-    let age = Number(process.argv[3])
+    let age = process.argv[3]
     let kind = process.argv[4]
     let name = process.argv[5]
 
@@ -39,13 +39,13 @@ if (cmd === 'read') {
       throw readErr
     }
 
-    if (!age && !kind && !name) {
+    if (!age || !kind || !name) {
       console.error(`Usage: ${node} ${file} create AGE KIND NAME`)
       process.exit(1)
     }
 
     let newPet = {
-      age: `${age}`,
+      age: Number(`${age}`),
       kind: `${kind}`,
       name: `${name}`
     }
@@ -64,4 +64,5 @@ if (cmd === 'read') {
 } else {
 
   console.error(`Usage: ${node} ${file} [read | create | update | destroy]`)
+  process.exit(1)
 }
