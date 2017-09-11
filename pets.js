@@ -11,17 +11,19 @@ let index = process.argv[3]
 
 if (cmd === 'read') {
   fs.readFile(petsPath, 'utf8', (err, data) => {
+    let pets = JSON.parse(data)
+
     if (err) {
       throw err
+    } else if (index > pets.length - 1) {
+      console.error(`Usage: ${node} ${file} read INDEX`);
     } else if (index === 0 || index) {
-      let pets = JSON.parse(data)
       console.log(pets[index])
     } else {
-      let pets = JSON.parse(data)
-      console.log(data);
+      console.log(pets);
     }
   })
 
-} else if ()
+}
 
-  console.error(`Usage: ${node} ${file} [read | create | update | destroy]`);
+console.error(`Usage: ${node} ${file} [read | create | update | destroy]`);
