@@ -27,15 +27,17 @@ app.get('/pets/:idx', (req, res) => {
     let petsData = JSON.parse(data)
 
     if (idx < 0 || idx >= petsData.length || Number.isNaN(idx)) { //typeof idx !== 'number'
-      res.sendStatus(404)
-      res.send('Not Found')
+
+      res.sendStatus(404) // equivalent to res.status(404).send('Not Found')
+
     }
 
-    // console.log(idx)
     res.send(petsData[idx])
   })
 
 })
+
+// app.post()
 
 app.listen(8000, () => {
   console.log('The app is listening on 8000');
