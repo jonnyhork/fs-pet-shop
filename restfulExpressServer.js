@@ -7,12 +7,6 @@ const petsPath = path.join(__dirname, 'pets.json')
 const express = require('express')
 const router = express.Router()
 
-// const morgan = require('morgan')
-// const bodyParser = require('body-parser')
-//
-// router.use(morgan('short'))
-// router.use(bodyParser.json())
-
 
 router.get('/pets', (_req, res) => {
   fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
@@ -87,62 +81,81 @@ router.post('/pets', (req, res) => {
       res.send(newPet)
     })
   })
+})
 
-  router.patch('/pets/:idx', (req, res) => {
-    fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
+router.patch('/pets/:idx', (req, res) => {
+  fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
 
-      if (readErr) {
-        console.error('PATCH read error:', readErr)
+    if (readErr) {
+      console.error('PATCH read error:', readErr)
+      return res.sendStatus(500)
+    }
+
+    let idx = Number(req.params.idx)
+    let petsData = JSON.parse(petsJSON)
+
+    if (idx < 0 || idx >= petsData.length || Number.isNaN(idx)) {
+      console.log('patch error')
+      return res.sendStatus(404)
+    }
+
+    let patchPet = petsData[idx]
+    let age = Number(req.body.age)
+
+    let {
+      kind,
+      name
+    } = req.body
+
+    if (Number.isNaN(age)) {
+      return res.sendStatus(400)
+    }
+
+    if (age) {
+      patchPet.age = age
+    }
+
+    if (kind) {
+      patchPet.kind = kind
+    }
+
+    if (name) {
+      patchPet.name = name
+    }
+
+    petsJSON = JSON.stringify(petsData)
+
+    fs.writeFile(petsPath, petsJSON, (writeErr) => {
+      if (writeErr) {
+        console.error('PATCH write error:', writeErr);
         return res.sendStatus(500)
       }
-
-      let idx = Number(req.params.idx)
-      let petsData = JSON.parse(petsJSON)
-
-      if (idx < 0 || idx >= petsData.length || Number.isNaN(idx)) {
-        console.log('patch error')
-        return res.sendStatus(404)
-      }
-
-      let patchPet = petsData[idx]
-      let age = Number(req.body.age)
-      let {
-        kind,
-        name
-      } = req.body
-
-      // if (isNaN(age) || !kind || !name) {
-      //   return res.sendStatus(400)
-      // }
-
-      if (age) {
-        patchPet.age = age
-      }
-
-      if (kind) {
-        patchPet.kind = kind
-      }
-
-      if (name) {
-        patchPet.name = name
-      }
-
-      petsJSON = JSON.stringify(petsData)
-
-      fs.writeFile(petsPath, petsJSON, (writeErr) => {
-        if (writeErr) {
-          console.error('PATCH write error:', writeErr);
-          return res.sendStatus(500)
-        }
-        res.send(patchPet)
-      })
-
+      res.send(patchPet)
     })
+
+  })
+})
+
+router.delete('/pets/:idx', (req, res) => {
+  fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
+
+    let idx = Number(req.params.idx)
+    let petsData = JSON.parse(petsJSON)
+
+    if (idx < 0 || idx >= petsData.length || Number.isNaN(idx)) {
+      return res.sendStatus(400)
+    }
+
+    let petsData.splice(idx, 1)
+
+
   })
 
-
-
 })
+
+
+
+
 
 
 
