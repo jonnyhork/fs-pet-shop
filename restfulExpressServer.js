@@ -43,6 +43,47 @@ router.get('/pets/:idx', (req, res) => {
     res.send(petsData[idx])
   })
 
+})
+
+router.post('/pets', (req, res) => {
+  console.log(req.body);
+  console.log(req.url);
+
+  fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
+    if (readErr) {
+      console.error(readErr)
+      return res.sendStatus(500)
+    }
+
+    let petsData = JSON.parse(petsJSON)
+    let age = Number(req.body.age)
+    let kind = req.body.kind
+    let name = req.body.name
+
+    if (isNaN(age) || !kind || !name) {
+      return res.sendStatus(400)
+    }
+
+    let newPet = {
+      age,
+      kind,
+      name
+    }
+
+    petsData.push(newPet)
+    petsJSON = JSON.stringify(petsData)
+
+    fs.writeFile(petsPath, petsJSON, (writeErr) => {
+      if (writeErr) {
+        console.error(writeErr);
+        return res.sendStatus(500)
+      }
+      res.send(newPet)
+    })
+  })
+
+
+
 
 
 })
