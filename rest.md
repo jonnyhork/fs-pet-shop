@@ -1,3 +1,6 @@
+// need to create two files a server.js and a restfulExpressServer.js,
+init server in server and route stuff in restfulExpressServer
+
 # RESTful Express HTTP server
 
 ![pet-shop](https://i.imgur.com/oZFSFYq.jpg)
