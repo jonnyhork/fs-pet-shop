@@ -3,21 +3,12 @@
 let fs = require('fs')
 const path = require('path')
 const petsPath = path.join(__dirname, 'pets.json')
+
 const express = require('express')
-const app = express()
-// const restPets = require('./restfulExpressServer')
-const morgan = require('morgan')
-const bodyParser = require('body-parser')
-
-app.use(morgan('short'))
-app.use(bodyParser.json())
-app.use((req, res, next) => {
-  res.setHeader('X-Powered-By', 'DREAMS and BACON')
-  next()
-})
+const router = express.Router()
 
 
-app.get('/pets', (_req, res) => {
+router.get('/pets', (_req, res) => {
   fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
     if (readErr) {
       console.error('GET read error:', readErr)
@@ -30,7 +21,7 @@ app.get('/pets', (_req, res) => {
   })
 })
 
-app.get('/pets/:idx', (req, res) => {
+router.get('/pets/:idx', (req, res) => {
   fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
     if (readErr) {
       console.error('GET read error:', readErr)
@@ -50,7 +41,7 @@ app.get('/pets/:idx', (req, res) => {
 
 })
 
-app.post('/pets', (req, res) => {
+router.post('/pets', (req, res) => {
   console.log(req.body);
   console.log(req.url);
 
@@ -92,7 +83,7 @@ app.post('/pets', (req, res) => {
   })
 })
 
-app.patch('/pets/:idx', (req, res) => {
+router.patch('/pets/:idx', (req, res) => {
   fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
 
     if (readErr) {
@@ -145,7 +136,7 @@ app.patch('/pets/:idx', (req, res) => {
   })
 })
 
-app.delete('/pets/:idx', (req, res) => {
+router.delete('/pets/:idx', (req, res) => {
   fs.readFile(petsPath, 'utf8', (readErr, petsJSON) => {
 
     let idx = Number(req.params.idx)
@@ -178,17 +169,4 @@ app.delete('/pets/:idx', (req, res) => {
 
 
 
-module.exports = app
-
-
-
-
-
-
-const port = process.env.PORT || 8000
-
-app.listen(port, () => {
-  console.log('Server listening on port: ', port)
-})
-
-module.exports = app
+module.exports = router
