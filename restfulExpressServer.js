@@ -146,9 +146,18 @@ router.delete('/pets/:idx', (req, res) => {
       return res.sendStatus(400)
     }
 
-    let petsData.splice(idx, 1)
+    let delPet = petsData.splice(idx, 1)[0]
+    // console.log(delPet);
+    petsJSON = JSON.stringify(petsData)
 
+    fs.writeFile(petsPath, petsJSON, (writeErr) => {
+      if (writeErr) {
+        console.error('DELETE write error:', writeErr)
+        return res.sendStatus(500)
+      }
 
+      res.send(delPet)
+    })
   })
 
 })
