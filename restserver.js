@@ -3,9 +3,10 @@
 
 const express = require('express')
 const app = express()
-const restPets = require('./restfulExpressServer')
+const restPets = require('./restfulExpressServer2')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
+const auth = require('basic-auth')
 
 app.use(morgan('short'))
 app.use(bodyParser.json())
@@ -14,7 +15,24 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use((req, res, next) => {
+  let credentials = auth(req)
+  console.log("creds are: ", credentials);
+
+  if (credentials && credentials.name === 'admin' && credentials.pass === 'meowmix') {
+    next() //move in to the next thing and fulfill the requst
+  } else {
+
+    res.setHeader('WWW-Authenticate', 'Basic realm="Required"')
+    res.sendStatus(401)
+    res.end('Access Denied')
+
+  }
+
+})
+
 app.use(restPets)
+
 
 
 app.use((_req, res) => {
